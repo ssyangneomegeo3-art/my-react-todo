@@ -494,3 +494,25 @@ body.dark .stat-card .value {
 body.dark .stat-card .value.active { color: #38bdf8; }
 body.dark .stat-card .value.completed { color: #34d399; }
 body.dark .stat-card .value.rate { color: #c084fc; }
+/* 토스트 애니메이션 키프레임 */
+@keyframes toastSlideIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@keyframes toastSlideOut {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 15px) scale(0.95);
+  }
+}

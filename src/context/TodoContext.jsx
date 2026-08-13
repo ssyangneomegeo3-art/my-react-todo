@@ -5,105 +5,224 @@ const TodoContext = createContext();
 export const TodoProvider = ({ children }) => {
   const [todos, setTodos] = useState(() => {
     const saved = localStorage.getItem('todos');
-    return saved ? JSON.parse(saved) : [];
+    if (!saved) return [];
+    try {
+      const parsed = JSON.parse(saved);
+      // 기존 데이터 하위 호환성 보장 (category가 없는 경우 '기타' 부여)
+      return parsed.map((todo) => ({
+        ...todo,
+        category: todo.category || '기타',
+      }));
+    } catch (e) {
+      console.error('Failed to parse todos from localStorage', e);
+      return [];
+    }
   });
 
-  const [filter, setFilter] = useState('all');
-
+  const [filter, setFilter] = useState('all'); // all, active, completed
+  const [selectedCategory, setSelectedCategory] = useState('전체'); // 전체, 공부, 업무, 개인, 기타
+  const [searchQuery, setSearchQuery] = useState('');
+  const [toastMessage, setToastMessage] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem('theme');
-    return savedTheme ? JSON.parse(savedTheme) : false;
+    return localStorage.getItem('theme') === 'dark';
   });
+
+  // 다크 모드 적용
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark', 'dark-mode');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark', 'dark-mode');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
 
   // LocalStorage 동기화
   useEffect(() => {
     localStorage.setItem('todos', JSON.stringify(todos));
   }, [todos]);
 
-  useEffect(() => {
-    localStorage.setItem('theme', JSON.stringify(isDarkMode));
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDarkMode]);
+  // 토스트 메시지
+  const showToast = useCallback((msg) => {
+    setToastMessage(msg);
+  }, []);
 
-  // 1. useCallback: 함수 참조값 재사용 (함수재생성 방지)
-  const addTodo = useCallback((text) => {
+  const clearToast = useCallback(() => {
+    setToastMessage('');
+  }, []);
+
+  // 다크모드 토글
+  const toggleDarkMode = useCallback(() => {
+    setIsDarkMode((prev) => {
+      const next = !prev;
+      showToast(next ? '🌙 다크 모드가 설정되었습니다.' : '☀️ 라이트 모드가 설정되었습니다.');
+      return next;
+    });
+  }, [showToast]);
+
+  // Todo 추가
+  const addTodo = useCallback((text, category = '개인') => {
     if (!text.trim()) return;
     const newTodo = {
       id: Date.now(),
-      text,
+      text: text.trim(),
       completed: false,
-      createdAt: new Date().toISOString(),
+      category,
+      createdAt: new Date().toLocaleString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
     };
     setTodos((prev) => [newTodo, ...prev]);
-  }, []);
+    showToast('✨ 새로운 할 일이 추가되었습니다!');
+  }, [showToast]);
 
+  // Todo 토글
   const toggleTodo = useCallback((id) => {
     setTodos((prev) =>
-      prev.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
+      prev.map((todo) => {
+        if (todo.id === id) {
+          const updated = !todo.completed;
+          showToast(updated ? '🎉 할 일을 완료했습니다!' : '🔄 할 일을 진행 중으로 변경했습니다.');
+          return { ...todo, completed: updated };
+        }
+        return todo;
+      })
     );
-  }, []);
+  }, [showToast]);
 
+  // Todo 삭제
   const deleteTodo = useCallback((id) => {
     setTodos((prev) => prev.filter((todo) => todo.id !== id));
-  }, []);
+    showToast('🗑️ 항목이 삭제되었습니다.');
+  }, [showToast]);
 
-  const editTodo = useCallback((id, newText) => {
+  // Todo 수정
+  const editTodo = useCallback((id, newText, newCategory) => {
+    if (!newText.trim()) return;
     setTodos((prev) =>
       prev.map((todo) =>
-        todo.id === id ? { ...todo, text: newText } : todo
+        todo.id === id ? { ...todo, text: newText.trim(), category: newCategory || todo.category } : todo
       )
     );
-  }, []);
+    showToast('✏️ 할 일이 수정되었습니다.');
+  }, [showToast]);
 
+  // 완료 항목 전체 삭제
   const clearCompleted = useCallback(() => {
-    setTodos((prev) => prev.filter((todo) => !todo.completed));
-  }, []);
+    setTodos((prev) => {
+      const activeCount = prev.filter((todo) => !todo.completed).length;
+      const removedCount = prev.length - activeCount;
+      if (removedCount > 0) {
+        showToast(`🧹 완료된 항목 ${removedCount}개가 삭제되었습니다.`);
+      }
+      return prev.filter((todo) => !todo.completed);
+    });
+  }, [showToast]);
 
-  const toggleDarkMode = useCallback(() => {
-    setIsDarkMode((prev) => !prev);
-  }, []);
+  // JSON 백업 (Export)
+  const exportData = useCallback(() => {
+    if (todos.length === 0) {
+      showToast('⚠️ 백업할 할 일 데이터가 없습니다.');
+      return;
+    }
+    const dataStr = JSON.stringify(todos, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const today = new Date().toISOString().slice(0, 10);
+    link.href = url;
+    link.download = `todo_backup_${today}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast('📥 JSON 백업 파일이 다운로드되었습니다.');
+  }, [todos, showToast]);
 
-  // 2. useMemo: 필터링 연산 결과 메모이제이션
+  // JSON 복원 (Import)
+  const importData = useCallback((importedTodos) => {
+    if (!Array.isArray(importedTodos)) {
+      showToast('❌ 올바르지 않은 데이터 형식입니다.');
+      return;
+    }
+    const validated = importedTodos.map((item) => ({
+      id: item.id || Date.now() + Math.random(),
+      text: item.text || '제목 없음',
+      completed: Boolean(item.completed),
+      category: item.category || '기타',
+      createdAt: item.createdAt || new Date().toLocaleString('ko-KR'),
+    }));
+    setTodos(validated);
+    showToast(`📤 ${validated.length}개의 할 일을 성공적으로 복원했습니다!`);
+  }, [showToast]);
+
+  // 상태 + 카테고리 + 검색어 실시간 중첩 필터링
   const filteredTodos = useMemo(() => {
     return todos.filter((todo) => {
-      if (filter === 'active') return !todo.completed;
-      if (filter === 'completed') return todo.completed;
-      return true;
-    });
-  }, [todos, filter]);
+      const matchesStatus =
+        filter === 'all'
+          ? true
+          : filter === 'active'
+          ? !todo.completed
+          : todo.completed;
 
-  // 3. useMemo: Provider 전달 value 객체 메모이제이션
+      const matchesCategory =
+        selectedCategory === '전체' ? true : todo.category === selectedCategory;
+
+      const matchesSearch = todo.text
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+
+      return matchesStatus && matchesCategory && matchesSearch;
+    });
+  }, [todos, filter, selectedCategory, searchQuery]);
+
   const value = useMemo(
     () => ({
       todos,
       filteredTodos,
       filter,
       setFilter,
+      selectedCategory,
+      setSelectedCategory,
+      searchQuery,
+      setSearchQuery,
+      toastMessage,
+      showToast,
+      clearToast,
       isDarkMode,
+      toggleDarkMode,
       addTodo,
       toggleTodo,
       deleteTodo,
       editTodo,
       clearCompleted,
-      toggleDarkMode,
+      exportData,
+      importData,
     }),
     [
       todos,
       filteredTodos,
       filter,
+      selectedCategory,
+      searchQuery,
+      toastMessage,
+      showToast,
+      clearToast,
       isDarkMode,
+      toggleDarkMode,
       addTodo,
       toggleTodo,
       deleteTodo,
       editTodo,
       clearCompleted,
-      toggleDarkMode,
+      exportData,
+      importData,
     ]
   );
 
@@ -113,7 +232,7 @@ export const TodoProvider = ({ children }) => {
 export const useTodo = () => {
   const context = useContext(TodoContext);
   if (!context) {
-    throw new Error('useTodo는 TodoProvider 내부에서만 사용할 수 있습니다.');
+    throw new Error('useTodo must be used within a TodoProvider');
   }
   return context;
 };
