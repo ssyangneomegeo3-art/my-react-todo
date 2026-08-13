@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import DarkModeToggle from './components/DarkModeToggle';
 import Navigation from './components/Navigation';
 import MainPage from './pages/MainPage';
 import StatsPage from './pages/StatsPage';
 import './App.css';
-
 
 function App() {
   const [todos, setTodos] = useState(() => {
