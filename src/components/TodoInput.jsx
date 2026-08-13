@@ -1,25 +1,31 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useTodo } from '../context/TodoContext';
 
-export default function TodoInput({ onAddTodo }) {
+function TodoInput() {
   const [text, setText] = useState('');
+  const { addTodo } = useTodo();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!text.trim()) return;
-    onAddTodo(text);
+    addTodo(text);
     setText('');
   };
 
   return (
-    <form className="todo-form" onSubmit={handleSubmit}>
+    <form className="todo-input-form" onSubmit={handleSubmit}>
       <input
         type="text"
         className="todo-input"
+        placeholder="새로운 할 일을 입력하세요..."
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="할 일을 입력하세요..."
       />
-      <button type="submit" className="todo-add-btn">추가</button>
+      <button type="submit" className="add-btn">
+        추가
+      </button>
     </form>
   );
 }
+
+export default TodoInput;

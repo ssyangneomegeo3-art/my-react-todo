@@ -1,4 +1,9 @@
-export default function FilterButtons({ filter, setFilter }) {
+import React from 'react';
+import { useTodo } from '../context/TodoContext';
+
+function FilterButtons() {
+  const { filter, setFilter } = useTodo();
+
   return (
     <div className="filter-buttons">
       <button
@@ -22,3 +27,5 @@ export default function FilterButtons({ filter, setFilter }) {
     </div>
   );
 }
+
+export default FilterButtons;

@@ -5,39 +5,14 @@ import FilterButtons from '../components/FilterButtons';
 import TodoList from '../components/TodoList';
 import ClearCompleted from '../components/ClearCompleted';
 
-function MainPage({
-  todos,
-  filter,
-  setFilter,
-  addTodo,
-  toggleTodo,
-  deleteTodo,
-  editTodo,
-  clearCompleted,
-}) {
-  const filteredTodos = todos.filter((todo) => {
-    if (filter === 'active') return !todo.completed;
-    if (filter === 'completed') return todo.completed;
-    return true;
-  });
-
-  const completedCount = todos.filter((t) => t.completed).length;
-
+function MainPage() {
   return (
-    <div className="page-content">
+    <div className="page-container main-page">
       <Quote />
-      <TodoInput addTodo={addTodo} />
-      <FilterButtons filter={filter} setFilter={setFilter} />
-      <TodoList
-        todos={filteredTodos}
-        toggleTodo={toggleTodo}
-        deleteTodo={deleteTodo}
-        editTodo={editTodo}
-      />
-      <ClearCompleted
-        completedCount={completedCount}
-        clearCompleted={clearCompleted}
-      />
+      <TodoInput />
+      <FilterButtons />
+      <TodoList />
+      <ClearCompleted />
     </div>
   );
 }

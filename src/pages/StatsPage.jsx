@@ -1,36 +1,35 @@
 import React from 'react';
 import TodoChart from '../components/TodoChart';
+import { useTodo } from '../context/TodoContext';
 
-function StatsPage({ todos }) {
-  const totalCount = todos.length;
-  const completedCount = todos.filter((t) => t.completed).length;
-  const activeCount = totalCount - completedCount;
-  const completionRate =
-    totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+function StatsPage() {
+  const { todos } = useTodo();
+
+  const total = todos.length;
+  const completed = todos.filter((t) => t.completed).length;
+  const active = total - completed;
+  const rate = total === 0 ? 0 : Math.round((completed / total) * 100);
 
   return (
-    <div className="page-content stats-page">
-      <h2>📊 할 일 달성 통계</h2>
-      <p className="stats-subtitle">현재 할 일들의 달성 현황 분석입니다.</p>
-
-      <TodoChart todos={todos} />
-
+    <div className="page-container stats-page">
+      <h2>📊 상세 학습 통계</h2>
+      <TodoChart />
       <div className="stats-cards">
         <div className="stat-card">
-          <span className="stat-label">전체 할 일</span>
-          <span className="stat-value">{totalCount}개</span>
+          <span className="label">전체 할 일</span>
+          <span className="value">{total}개</span>
         </div>
-        <div className="stat-card active-card">
-          <span className="stat-label">진행 중</span>
-          <span className="stat-value">{activeCount}개</span>
+        <div className="stat-card">
+          <span className="label">진행 중</span>
+          <span className="value active">{active}개</span>
         </div>
-        <div className="stat-card completed-card">
-          <span className="stat-label">완료됨</span>
-          <span className="stat-value">{completedCount}개</span>
+        <div className="stat-card">
+          <span className="label">완료됨</span>
+          <span className="value completed">{completed}개</span>
         </div>
-        <div className="stat-card rate-card">
-          <span className="stat-label">달성률</span>
-          <span className="stat-value">{completionRate}%</span>
+        <div className="stat-card">
+          <span className="label">달성률</span>
+          <span className="value rate">{rate}%</span>
         </div>
       </div>
     </div>
