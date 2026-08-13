@@ -1,59 +1,29 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useEffect } from 'react';
 import { useTodo } from '../context/TodoContext';
 
-const Toast = () => {
+function Toast() {
   const { toastMessage, clearToast } = useTodo();
-  const [visible, setVisible] = useState(false);
-  const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
-    if (toastMessage) {
-      setVisible(true);
-      setIsExiting(false);
+    if (!toastMessage) return;
 
-      // 1.5초 후에 천천히 퇴장하는 모션 시작
-      const exitTimer = setTimeout(() => {
-        setIsExiting(true);
-      }, 1500);
+    // 0.2초 등장 + 1.9초 대기 + 0.5초 퇴장 = 총 2.6초 후 DOM에서 제거
+    const timer = setTimeout(() => {
+      clearToast();
+    }, 2600);
 
-      // 2.0초 후에 DOM에서 완전히 제거
-      const removeTimer = setTimeout(() => {
-        setVisible(false);
-        clearToast();
-      }, 2000);
-
-      return () => {
-        clearTimeout(exitTimer);
-        clearTimeout(removeTimer);
-      };
-    }
+    return () => clearTimeout(timer);
   }, [toastMessage, clearToast]);
 
-  if (!visible || !toastMessage) return null;
+  if (!toastMessage) return null;
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        bottom: '28px',
-        left: '50%',
-        backgroundColor: '#1e293b',
-        color: '#ffffff',
-        padding: '10px 22px',
-        borderRadius: '24px',
-        fontSize: '13px',
-        fontWeight: '500',
-        boxShadow: '0 8px 20px rgba(0, 0, 0, 0.25)',
-        zIndex: 1000,
-        pointerEvents: 'none',
-        animation: isExiting
-          ? 'toastSlideOut 0.5s cubic-bezier(0.4, 0, 1, 1) forwards'
-          : 'toastSlideIn 0.2s cubic-bezier(0, 0, 0.2, 1) forwards',
-      }}
-    >
-      {toastMessage}
+    <div className="toast-container">
+      <div className="toast-content">
+        <span>{toastMessage}</span>
+      </div>
     </div>
   );
-};
+}
 
-export default memo(Toast);
+export default React.memo(Toast);
