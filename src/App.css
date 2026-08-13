@@ -4,6 +4,11 @@
   padding: 0;
 }
 
+/* 브라우저 스크롤바 유무에 따른 카드 너비 미세 변동 방지 */
+html {
+  overflow-y: scroll;
+}
+
 body {
   background-color: #f8fafc;
   color: #334155;
@@ -25,10 +30,13 @@ body.dark-mode {
   background-color: #ffffff;
   width: 100%;
   max-width: 440px;
+  min-height: 520px; /* 페이지 전환 시 카드 높이가 급격히 줄어드는 현상 방지 */
   padding: 28px 24px;
   border-radius: 16px;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
   position: relative;
+  display: flex;
+  flex-direction: column;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -77,9 +85,13 @@ body.dark-mode .nav-container {
   padding: 8px 12px;
   text-decoration: none;
   color: #64748b;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 600;
   border-radius: 8px;
+  white-space: nowrap; /* 탭 글씨가 2줄로 꺾이는 현상 완전 차단 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.2s ease;
 }
 
@@ -96,6 +108,12 @@ body.dark-mode .nav-link {
 body.dark-mode .nav-link.active {
   background-color: #1e293b;
   color: #60a5fa;
+}
+
+.page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .quote-container {
@@ -169,7 +187,7 @@ body.dark-mode .todo-input {
   height: 100% !important;
 }
 
-/* 상세 통계 전용 스타일 */
+/* 상세 통계 페이지 전용 스타일 */
 .stats-page h2 {
   font-size: 1.15rem;
   text-align: center;
@@ -325,16 +343,6 @@ body.dark-mode .todo-item.completed .todo-text {
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
-}
-
-.todo-timestamp {
-  font-size: 0.75rem;
-  color: #94a3b8;
-  font-variant-numeric: tabular-nums;
-}
-
-body.dark-mode .todo-timestamp {
-  color: #cbd5e1;
 }
 
 .delete-btn {
