@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 
-// 타임스탬프 복원 도우미 함수 (createdAt이 없으면 id 기반으로 시각 복원)
 const getDisplayTime = (todo) => {
   if (todo.createdAt) return todo.createdAt;
 
-  // id가 Date.now() 타임스탬프 숫자일 경우 기존 작성 시각 복원
   if (todo.id && typeof todo.id === 'number') {
     const date = new Date(todo.id);
     if (!isNaN(date.getTime())) {
@@ -48,7 +46,6 @@ function TodoList({ todos, toggleTodo, deleteTodo, editTodo }) {
   return (
     <ul className="todo-list">
       {todos.map((todo) => {
-        // 기존 데이터와 신규 데이터 모두 처리 가능한 타임스탬프 가져오기
         const displayTime = getDisplayTime(todo);
 
         return (
@@ -75,6 +72,7 @@ function TodoList({ todos, toggleTodo, deleteTodo, editTodo }) {
                 <div className="todo-main-info">
                   <input
                     type="checkbox"
+                    className="todo-checkbox"
                     checked={todo.completed}
                     onChange={() => toggleTodo(todo.id)}
                   />
