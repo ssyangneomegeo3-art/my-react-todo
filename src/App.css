@@ -93,7 +93,7 @@ body.dark-mode .nav-link.active {
   background-color: #1e3a8a;
 }
 
-/* 다크 모드 토글 버튼 정밀 스타일 */
+/* 다크 모드 토글 버튼 */
 .dark-mode-toggle {
   background: #f1f5f9;
   border: 1px solid #cbd5e1;
@@ -127,7 +127,7 @@ body.dark-mode .dark-mode-toggle:hover {
    3. COMPONENTS STYLES
    ========================================================================== */
 
-/* 명언 상자 (80px 고정 규격) */
+/* 명언 상자 (80px 고정) */
 .quote-box {
   height: 80px;
   border: 1px solid #e2e8f0;
@@ -258,7 +258,7 @@ body.dark-mode .todo-input {
   background-color: #1d4ed8;
 }
 
-/* 툴바 정렬 (검색 바 + 정렬 셀렉트 정밀 레이아웃) */
+/* 툴바 정렬 (검색 바 + 정렬 셀렉트) */
 .toolbar-section {
   display: flex;
   justify-content: space-between;
@@ -314,7 +314,7 @@ body.dark-mode .search-input {
   color: #f8fafc;
 }
 
-/* 정렬 셀렉트 스타일 */
+/* 정렬 셀렉트 */
 .todo-sort-container {
   display: flex;
   align-items: center;
@@ -358,15 +358,6 @@ body.dark-mode .sort-select {
   padding-bottom: 4px;
 }
 
-.category-filter-group::-webkit-scrollbar {
-  height: 4px;
-}
-
-.category-filter-group::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 2px;
-}
-
 .cat-btn {
   padding: 5px 12px;
   border: 1px solid #e2e8f0;
@@ -400,7 +391,7 @@ body.dark-mode .cat-btn.active {
   font-weight: 700;
 }
 
-/* 상태 필터 (전체 / 진행 중 / 완료) */
+/* 상태 필터 */
 .filter-buttons {
   display: flex;
   gap: 6px;
@@ -444,7 +435,7 @@ body.dark-mode .filter-btn.active {
 }
 
 /* ==========================================================================
-   4. TODO LIST & ITEM STYLES
+   4. TODO LIST & DRAG AND DROP STYLES
    ========================================================================== */
 .todo-list {
   list-style: none;
@@ -455,26 +446,13 @@ body.dark-mode .filter-btn.active {
   padding-right: 2px;
 }
 
-.todo-list::-webkit-scrollbar {
-  width: 4px;
-}
-
-.todo-list::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 2px;
-}
-
-body.dark-mode .todo-list::-webkit-scrollbar-thumb {
-  background-color: #334155;
-}
-
 .todo-item {
   padding: 10px 12px;
   background-color: #f8fafc;
   border-radius: 10px;
   margin-bottom: 8px;
   border: 1px solid #f1f5f9;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 body.dark-mode .todo-item {
@@ -482,10 +460,48 @@ body.dark-mode .todo-item {
   border-color: #1e293b;
 }
 
+/* 드래그 중인 항목 스타일 */
+.todo-item.is-dragging {
+  background-color: #ffffff;
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+  border-color: #2563eb;
+}
+
+body.dark-mode .todo-item.is-dragging {
+  background-color: #1e293b;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+  border-color: #38bdf8;
+}
+
 .todo-content {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+}
+
+/* 드래그 핸들 (⋮⋮) 아이콘 */
+.drag-handle {
+  cursor: grab;
+  user-select: none;
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 0 4px;
+  line-height: 1;
+  touch-action: none;
+  transition: color 0.2s ease;
+}
+
+.drag-handle:hover {
+  color: #2563eb;
+}
+
+body.dark-mode .drag-handle:hover {
+  color: #38bdf8;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
 }
 
 .checkbox-container {
@@ -516,7 +532,7 @@ body.dark-mode .todo-item {
   overflow: hidden;
 }
 
-/* 카테고리 배지 시각적 구분 보장 */
+/* 카테고리 배지 */
 .category-badge {
   font-size: 11px;
   padding: 2px 7px;
@@ -570,7 +586,6 @@ body.dark-mode .todo-text {
   cursor: pointer;
   padding: 4px;
   border-radius: 4px;
-  transition: background-color 0.2s ease;
 }
 
 .edit-btn:hover, .delete-btn:hover {
@@ -610,7 +625,7 @@ body.dark-mode .edit-btn:hover, body.dark-mode .delete-btn:hover {
 .save-btn { background-color: #16a34a; color: white; }
 .cancel-btn { background-color: #dc2626; color: white; }
 
-/* 데이터 없음 및 하단 버튼 */
+/* 하단 버튼 및 토스트 */
 .empty-state {
   text-align: center;
   padding: 40px 0;
@@ -637,9 +652,7 @@ body.dark-mode .edit-btn:hover, body.dark-mode .delete-btn:hover {
   text-decoration: underline;
 }
 
-/* ==========================================================================
-   5. TOAST NOTIFICATION & ANIMATIONS
-   ========================================================================== */
+/* 토스트 알림 */
 .toast-container {
   position: fixed;
   bottom: 24px;
@@ -682,7 +695,7 @@ body.dark-mode .toast-container {
   }
 }
 
-/* PWA 설치 배너 및 오프라인 바 */
+/* PWA 설치 배너 */
 .pwa-banner {
   background-color: #eff6ff;
   border: 1px solid #bfdbfe;

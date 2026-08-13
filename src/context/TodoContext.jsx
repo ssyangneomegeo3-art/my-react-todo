@@ -18,7 +18,7 @@ export const TodoProvider = ({ children }) => {
   const [filter, setFilter] = useState('all'); // all | active | completed
   const [selectedCategory, setSelectedCategory] = useState('전체'); // 전체 | 공부 | 업무 | 개인 | 기타
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('latest'); // latest | oldest | alphabetical | category
+  const [sortBy, setSortBy] = useState('custom'); // custom | latest | oldest | alphabetical | category
   const [toastMessage, setToastMessage] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem('theme') === 'dark';
@@ -132,7 +132,23 @@ export const TodoProvider = ({ children }) => {
     setIsDarkMode((prev) => !prev);
   }, []);
 
-  // 7. Backup Export / Import
+  // 7. Drag & Drop Reorder Handler
+  const reorderTodos = useCallback((sourceIndex, destinationIndex) => {
+    setTodos((prev) => {
+      const sourceItem = prev[sourceIndex];
+      const destItem = prev[destinationIndex];
+      if (!sourceItem || !destItem) return prev;
+
+      const newTodos = [...prev];
+      const [moved] = newTodos.splice(sourceIndex, 1);
+      newTodos.splice(destinationIndex, 0, moved);
+      return newTodos;
+    });
+    setSortBy('custom');
+    showToast('↕️ 할 일 순서가 변경되었습니다.');
+  }, [showToast]);
+
+  // 8. Backup Export / Import
   const exportData = useCallback(() => {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(todos, null, 2));
     const downloadAnchor = document.createElement('a');
@@ -153,18 +169,14 @@ export const TodoProvider = ({ children }) => {
     }
   }, [showToast]);
 
-  // 8. Multi-layer Filtering & Sorting (Memoized)
+  // 9. Multi-layer Filtering & Sorting (Memoized)
   const filteredAndSortedTodos = useMemo(() => {
     // Stage 1: Filtering
     let result = todos.filter((todo) => {
-      // Status Filter
       if (filter === 'active' && todo.completed) return false;
       if (filter === 'completed' && !todo.completed) return false;
-
-      // Category Filter
       if (selectedCategory !== '전체' && todo.category !== selectedCategory) return false;
 
-      // Search Filter
       if (searchQuery.trim() !== '') {
         const query = searchQuery.toLowerCase();
         const textMatch = todo.text.toLowerCase().includes(query);
@@ -176,7 +188,11 @@ export const TodoProvider = ({ children }) => {
     });
 
     // Stage 2: Sorting
-    return result.sort((a, b) => {
+    if (sortBy === 'custom') {
+      return result; // 드래그 순서 유지
+    }
+
+    return [...result].sort((a, b) => {
       if (sortBy === 'latest') {
         return new Date(b.createdAt || b.id) - new Date(a.createdAt || a.id);
       }
@@ -215,6 +231,7 @@ export const TodoProvider = ({ children }) => {
     deleteTodo,
     editTodo,
     clearCompleted,
+    reorderTodos,
     exportData,
     importData,
     triggerConfetti,
@@ -236,6 +253,7 @@ export const TodoProvider = ({ children }) => {
     deleteTodo,
     editTodo,
     clearCompleted,
+    reorderTodos,
     exportData,
     importData,
     triggerConfetti,

@@ -15,6 +15,7 @@ const TodoSort = () => {
         onChange={(e) => setSortBy(e.target.value)}
         className="sort-select"
       >
+        <option value="custom">사용자 지정 (드래그)</option>
         <option value="latest">최신등록순</option>
         <option value="oldest">오래된순</option>
         <option value="alphabetical">가나다순</option>
