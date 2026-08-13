@@ -1,123 +1,119 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
-// 1. Context 생성
 const TodoContext = createContext();
 
-// 2. Provider 컴포넌트 구현
 export const TodoProvider = ({ children }) => {
-  // [State 1] 할 일 목록 (LocalStorage 연동)
   const [todos, setTodos] = useState(() => {
-    const saved = localStorage.getItem('my-react-todos');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error('LocalStorage parsing error:', e);
-        return [];
-      }
-    }
-    return [
-      { id: 1, text: 'React Router 적용하기', completed: true, createdAt: '2026. 08. 12. 오후 02:00:00' },
-      { id: 2, text: 'Context API로 전역 상태 관리하기', completed: false, createdAt: '2026. 08. 13. 오전 10:30:00' }
-    ];
+    const saved = localStorage.getItem('todos');
+    return saved ? JSON.parse(saved) : [];
   });
 
-  // [State 2] 필터링 상태 ('all' | 'active' | 'completed')
   const [filter, setFilter] = useState('all');
 
-  // [State 3] 다크 모드 상태 (LocalStorage 연동)
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    const saved = localStorage.getItem('my-todo-darkmode');
-    return saved ? JSON.parse(saved) : false;
+    const savedTheme = localStorage.getItem('theme');
+    return savedTheme ? JSON.parse(savedTheme) : false;
   });
 
-  // LocalStorage 동기화 (todos)
+  // LocalStorage 동기화
   useEffect(() => {
-    localStorage.setItem('my-react-todos', JSON.stringify(todos));
+    localStorage.setItem('todos', JSON.stringify(todos));
   }, [todos]);
 
-  // LocalStorage 및 body 클래스 동기화 (isDarkMode)
   useEffect(() => {
-    localStorage.setItem('my-todo-darkmode', JSON.stringify(isDarkMode));
+    localStorage.setItem('theme', JSON.stringify(isDarkMode));
     if (isDarkMode) {
-      document.body.classList.add('dark');
+      document.documentElement.classList.add('dark');
     } else {
-      document.body.classList.remove('dark');
+      document.documentElement.classList.remove('dark');
     }
   }, [isDarkMode]);
 
-  // [Action Handlers]
-  const toggleDarkMode = () => setIsDarkMode((prev) => !prev);
-
-  const addTodo = (text) => {
+  // 1. useCallback: 함수 참조값 재사용 (함수재생성 방지)
+  const addTodo = useCallback((text) => {
     if (!text.trim()) return;
     const newTodo = {
       id: Date.now(),
       text,
       completed: false,
-      createdAt: new Date().toLocaleString()
+      createdAt: new Date().toISOString(),
     };
     setTodos((prev) => [newTodo, ...prev]);
-  };
+  }, []);
 
-  const toggleTodo = (id) => {
+  const toggleTodo = useCallback((id) => {
     setTodos((prev) =>
       prev.map((todo) =>
         todo.id === id ? { ...todo, completed: !todo.completed } : todo
       )
     );
-  };
+  }, []);
 
-  const deleteTodo = (id) => {
+  const deleteTodo = useCallback((id) => {
     setTodos((prev) => prev.filter((todo) => todo.id !== id));
-  };
+  }, []);
 
-  const editTodo = (id, newText) => {
-    if (!newText.trim()) return;
+  const editTodo = useCallback((id, newText) => {
     setTodos((prev) =>
       prev.map((todo) =>
         todo.id === id ? { ...todo, text: newText } : todo
       )
     );
-  };
+  }, []);
 
-  const clearCompleted = () => {
+  const clearCompleted = useCallback(() => {
     setTodos((prev) => prev.filter((todo) => !todo.completed));
-  };
+  }, []);
 
-  // 계산된 상태 (Filtered Todos)
-  const filteredTodos = todos.filter((todo) => {
-    if (filter === 'active') return !todo.completed;
-    if (filter === 'completed') return todo.completed;
-    return true;
-  });
+  const toggleDarkMode = useCallback(() => {
+    setIsDarkMode((prev) => !prev);
+  }, []);
 
-  return (
-    <TodoContext.Provider
-      value={{
-        todos,
-        filteredTodos,
-        filter,
-        setFilter,
-        isDarkMode,
-        toggleDarkMode,
-        addTodo,
-        toggleTodo,
-        deleteTodo,
-        editTodo,
-        clearCompleted
-      }}
-    >
-      {children}
-    </TodoContext.Provider>
+  // 2. useMemo: 필터링 연산 결과 메모이제이션
+  const filteredTodos = useMemo(() => {
+    return todos.filter((todo) => {
+      if (filter === 'active') return !todo.completed;
+      if (filter === 'completed') return todo.completed;
+      return true;
+    });
+  }, [todos, filter]);
+
+  // 3. useMemo: Provider 전달 value 객체 메모이제이션
+  const value = useMemo(
+    () => ({
+      todos,
+      filteredTodos,
+      filter,
+      setFilter,
+      isDarkMode,
+      addTodo,
+      toggleTodo,
+      deleteTodo,
+      editTodo,
+      clearCompleted,
+      toggleDarkMode,
+    }),
+    [
+      todos,
+      filteredTodos,
+      filter,
+      isDarkMode,
+      addTodo,
+      toggleTodo,
+      deleteTodo,
+      editTodo,
+      clearCompleted,
+      toggleDarkMode,
+    ]
   );
+
+  return <TodoContext.Provider value={value}>{children}</TodoContext.Provider>;
 };
 
-// 3. 커스텀 훅 (easy access)
 export const useTodo = () => {
   const context = useContext(TodoContext);
   if (!context) {
-    throw new Error('useTodo must be used within a TodoProvider');
+    throw new Error('useTodo는 TodoProvider 내부에서만 사용할 수 있습니다.');
   }
   return context;
 };

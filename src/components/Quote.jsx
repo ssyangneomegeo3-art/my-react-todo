@@ -1,50 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 
-function Quote() {
-  const [quote, setQuote] = useState({ text: '', author: '' });
-  const [loading, setLoading] = useState(true);
+const Quote = () => {
+  const [quote, setQuote] = useState({ text: '명언을 불러오는 중...', author: '' });
+  const [loading, setLoading] = useState(false);
 
-  const fetchQuote = async () => {
+  const fetchQuote = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://dummyjson.com/quotes/random');
-      if (!response.ok) throw new Error('명언을 불러오는데 실패했습니다.');
-      const data = await response.json();
+      const res = await fetch('https://dummyjson.com/quotes/random');
+      const data = await res.json();
       setQuote({ text: data.quote, author: data.author });
     } catch (error) {
-      setQuote({
-        text: '고통 없이는 얻는 것도 없다.',
-        author: '벤저민 프랭클린'
-      });
+      setQuote({ text: '명언을 불러오는 데 실패했습니다.', author: '' });
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchQuote();
-  }, []);
+  }, [fetchQuote]);
 
   return (
-    <div className="quote-container">
-      <div className="quote-content">
-        <p className={`quote-text ${loading ? 'loading' : ''}`} title={loading ? '' : quote.text}>
-          {loading ? '✨ 명언을 불러오는 중...' : `"${quote.text}"`}
-        </p>
-        <p className={`quote-author ${loading ? 'loading-author' : ''}`}>
-          {loading ? '\u00A0' : `- ${quote.author}`}
-        </p>
-      </div>
+    <div className="quote-box">
+      <p className="quote-text">{quote.text}</p>
+      {quote.author && <span className="quote-author">- {quote.author}</span>}
       <button
-        className="quote-refresh-btn"
         onClick={fetchQuote}
-        title="새로운 명언 불러오기"
+        className="quote-refresh-btn"
         disabled={loading}
+        aria-label="명언 새로고침"
       >
-        🔄
+        {loading ? '...' : '🔄'}
       </button>
     </div>
   );
-}
+};
 
-export default Quote;
+export default memo(Quote);

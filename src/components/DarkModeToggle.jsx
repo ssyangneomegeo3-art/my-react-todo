@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { useTodo } from '../context/TodoContext';
 
-function DarkModeToggle() {
+const DarkModeToggle = () => {
   const { isDarkMode, toggleDarkMode } = useTodo();
 
   return (
-    <button className="dark-mode-toggle" onClick={toggleDarkMode} title="다크 모드 토글">
+    <button
+      onClick={toggleDarkMode}
+      className="dark-mode-btn"
+      aria-label="다크 모드 토글"
+    >
       {isDarkMode ? '☀️' : '🌙'}
     </button>
   );
-}
+};
 
-export default DarkModeToggle;
+export default memo(DarkModeToggle);
