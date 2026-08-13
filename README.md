@@ -1,95 +1,97 @@
-# 📱 My React Todo (PWA) — 포트폴리오 README
+# 📋 React & PWA 모던 할 일 관리 앱 (my-react-todo)
 
-> **Vanilla JS부터 시작하여 React, Context API, 성능 최적화(useMemo, useCallback, React.memo), 그리고 PWA(Progressive Web App) 오프라인 지원까지 14일간 완성한 모던 할 일 관리 웹/앱 프로젝트입니다.**
-
-[![Deploy](https://img.shields.io/badge/GitHub%20Pages-Deployed-success?style=for-the-badge&logo=github)](https://ssyangneomegeo3-art.github.io/my-react-todo/)
-[![React](https://img.shields.io/badge/React-18.x-61DAFB?style=for-the-badge&logo=react)](https://react.dev/)
-[![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=for-the-badge&logo=vite)](https://vitejs.dev/)
-[![PWA](https://img.shields.io/badge/PWA-Enabled-5A0FC8?style=for-the-badge&logo=pwa)](https://web.dev/progressive-web-apps/)
+> **React 18, PWA, Drag & Drop UX, CI/CD 자동화로 구축한 실무형 웹 애플리케이션**  
+> 💡 Vanilla JS부터 시작하여 React 모듈화, Context API 기반 상태 관리, 렌더링 최적화, PWA 오프라인 지원, 드래그 앤 드롭 UX, GitHub Actions CI/CD까지 단계적으로 고도화한 포트폴리오 프로젝트입니다.
 
 ---
 
-## 🔗 배포 및 대표 정보
+## 🔗 프로젝트 링크 및 배포 정보
 
-* **Live Demo**: [https://ssyangneomegeo3-art.github.io/my-react-todo/](https://ssyangneomegeo3-art.github.io/my-react-todo/)
-* **Developer GitHub**: [ssyangneomegeo3-art](https://github.com/ssyangneomegeo3-art)
-* **Repository**: [my-react-todo](https://github.com/ssyangneomegeo3-art/my-react-todo)
+- **라이브 데모 (GitHub Pages)**: [https://ssyangneomegeo3-art.github.io/my-react-todo/](https://ssyangneomegeo3-art.github.io/my-react-todo/)
+- **GitHub Repository**: [https://github.com/ssyangneomegeo3-art/my-react-todo](https://github.com/ssyangneomegeo3-art/my-react-todo)
+- **개발 기간**: 1일 차 ~ 16일 차 (단계적 스펙 확장 및 UX 고도화)
 
 ---
 
-## 🌟 프로젝트 핵심 특징 (Key Highlights)
+## ✨ 핵심 기능 (Key Features)
 
-1. **📱 PWA (Progressive Web App) 오프라인 & 앱 설치 지원**
-   - Service Worker (`vite-plugin-pwa` + Workbox) 기반 정적 리소스 캐싱으로 비행기 모드/지하철 등 인터넷 연결이 끊긴 환경에서도 100% 정상 구동
-   - Custom Install Banner (`PwaInstallPrompt.jsx`)를 통해 PC 및 모바일 홈 화면에 독립형 앱(Standalone)으로 직접 설치 가능
-   - 온라인/오프라인 실시간 감지 안테나 및 Toast 피드백 제공
+### 1. 🖐️ Drag & Drop 커스텀 재정렬 (`@hello-pangea/dnd`)
+- `@hello-pangea/dnd` 라이브러리를 활용하여 드래그 핸들(`⋮⋮`)을 잡고 터치/마우스로 할 일 순서를 자유롭게 재배치.
+- 순서 변경 시 자동으로 **'사용자 지정 (드래그)'** 정렬 모드로 전환되어 `LocalStorage`에 반영.
 
-2. **🏷️ 카테고리 태그 및 3중 실시간 중첩 필터링 (Compound Filtering)**
-   - `공부`, `업무`, `개인`, `기타` 4가지 카테고리 지정 및 전용 색상 배지 시각화
-   - `진행 상태(전체/진행 중/완료)` × `카테고리(공부/업무/...)` × `검색어(실시간 돋보기)` 3가지 조건의 복합 실시간 필터링 제공 (`useMemo` 최적화)
+### 2. 🎉 감성 UX & 시각적 피드백
+- **완료 폭죽 효과**: 할 일 체크 시 `canvas-confetti` 애니메이션 실행으로 달성감 제공.
+- **스르륵 토스트 알림**: CUD(생성/수정/삭제) 및 데이터 작업 발생 시 `0.2s Slide-in` & `0.5s Fade-out` 키프레임 애니메이션 알림 탑재.
 
-3. **💾 안전한 클라이언트 JSON 백업 & 복원 (Export / Import)**
-   - Browser Blob API를 활용하여 전체 데이터를 `todo_backup_YYYY-MM-DD.json` 파일로 내보내기
-   - FileReader API 기반으로 JSON 백업 파일을 업로드하여 브라우저/기기 간 데이터 즉시 복원
-   - 하위 호환성 검증을 통해 구버전 로컬 데이터 수용 및 데이터 손실 차단
+### 3. 🔀 다중 정렬 & 3중 실시간 중첩 필터링
+- **다중 정렬 시스템**: 사용자 지정 (드래그) / 최신등록순 / 오래된순 / 가나다순 / 카테고리순 5가지 정렬 옵션 제공.
+- **3중 복합 필터링**: `상태(전체/진행 중/완료)` × `카테고리(공부/업무/개인/기타)` × `돋보기 토글 검색어` 조합 필터링 연산.
 
-4. **⚡ 성능 최적화 및 Clean Architecture**
-   - **Prop Drilling 해소**: Context API (`TodoContext.jsx`) 및 Custom Hook (`useTodo`) 구조로 전역 상태 관리
-   - **불필요한 리렌더링 차단**: 핵심 컴포넌트에 `React.memo` 적용, 핸들러 함수에 `useCallback`, 연산 배열에 `useMemo` 완벽 적용
+### 4. 📱 PWA (Progressive Web App) 완전 지원
+- `vite-plugin-pwa` 및 Workbox Service Worker를 적용하여 오프라인 환경에서도 앱 작동 가능.
+- 커스텀 앱 설치 배너 (`PwaInstallPrompt.jsx`) 및 네트워크 연결 상태 감지 바 탑재.
 
-5. **🎨 UI/UX 디테일 & 반응형 모던 디자인**
-   - 440px 고정 가로폭 카드 컨테이너 기반 중앙 레이아웃 & 80px 고정 규격 명언 상자
-   - CSS Keyframes 기반 `0.2s Slide-In` & `0.5s Smooth Fade-Out` 부드러운 스르륵 토스트 알림
-   - `☀️/🌙` 다크 모드 동기화 (HTML/Body 클래스 연동 및 LocalStorage 테마 기억)
-   - Chart.js 기반 동적 도넛 차트 및 통계 카드 리포트 페이지 (`StatsPage.jsx`)
+### 5. 📊 Chart.js 데이터 시각화 & 대시보드 (`StatsPage.jsx`)
+- `react-chartjs-2` 기반 진행률 도넛 차트 및 카테고리별 통계 분포 리포트 제공.
+- `react-router-dom` (HashRouter) 기반 다중 페이지 분리 (MainPage / StatsPage).
+
+### 6. 💾 JSON 데이터 백업 & 복원 (Export / Import)
+- 작성된 할 일 데이터를 JSON 파일로 다운로드 백업하고, 파일 업로드를 통해 즉시 복원 지원.
+
+### 7. ☀️/🌙 전역 스코프 다크 모드
+- `html` / `body` 전역 동기화 및 `Pretendard` 웹폰트를 적용하여 반응형 440px 모던 카드 UI 유지.
+
+### 8. 🤖 GitHub Actions CI/CD 자동 배포
+- `.github/workflows/deploy.yml`을 구축하여 `main` 브랜치에 Push 시 클라우드 서버에서 자동 빌드 및 GitHub Pages 배포 파이프라인 운용.
 
 ---
 
 ## 🛠️ 기술 스택 (Tech Stack)
 
-| 구분 | 사용 기술 / 라이브러리 |
+| 구분 | 기술 / 라이브러리 |
 | :--- | :--- |
-| **Frontend Framework** | React 18, JSX |
-| **Build Tool & Environment** | Vite 5.x, Node.js (npm) |
-| **Routing** | React Router v6 (`HashRouter`) |
-| **State Management** | React Context API, Custom Hook (`useTodo`) |
-| **Performance Optimization** | `React.memo`, `useCallback`, `useMemo` |
-| **Visualization** | Chart.js, react-chartjs-2 |
-| **PWA & Caching** | `vite-plugin-pwa`, Workbox, Service Worker |
-| **Styling & Icons** | Vanilla CSS, Flexbox, Keyframe Animations |
-| **Deployment** | GitHub Pages (`gh-pages`) |
+| **Core** | React 18 (Vite), JavaScript (ES6+), JSX |
+| **State Management** | Context API (`TodoContext`), Custom Hook (`useTodo`) |
+| **Routing** | `react-router-dom` (v6, HashRouter) |
+| **Interactive UX** | `@hello-pangea/dnd`, `canvas-confetti` |
+| **Data Visualization** | `Chart.js`, `react-chartjs-2` |
+| **PWA** | `vite-plugin-pwa`, Workbox Service Worker |
+| **Styling** | CSS3 (Pretendard WebFont, Keyframes, Dark Mode Scope) |
+| **CI/CD & Hosting** | GitHub Actions, GitHub Pages |
 
 ---
 
-## 📂 프로젝트 구조 (Directory Structure)
+## 📂 프로젝트 파일 구조 (Project Structure)
 
 ```text
 my-react-todo/
-├── public/
-│   └── favicon.ico
+├── .github/
+│   └── workflows/
+│       └── deploy.yml          # GitHub Actions CI/CD 자동 배포 워크플로우
+├── index.html                  # PWA 메타 태그, 파비콘, Pretendard 폰트
+├── vite.config.js              # VitePWA 플러그인, Workbox 설정, GitHub Pages base path
 ├── src/
 │   ├── context/
-│   │   └── TodoContext.jsx      # todos, filter, searchQuery, dark mode, PWA online, backup 핸들러 전역 관리
+│   │   └── TodoContext.jsx     # 전역 상태, LocalStorage, Drag&Drop, 3중 필터/정렬 통합
 │   ├── components/
-│   │   ├── Navigation.jsx       # 📋 메인 / 📊 상세 통계 탭 링크
-│   │   ├── DarkModeToggle.jsx   # 다크모드 ☀️/🌙 토글 버튼 (React.memo)
-│   │   ├── Quote.jsx            # 명언 API 연동, 🔄 새로고침 버튼, 80px 고정 레이아웃
-│   │   ├── TodoInput.jsx        # 신규 할 일 및 카테고리 셀렉트 폼
-│   │   ├── TodoSearch.jsx       # 🔍 돋보기 토글형 실시간 검색창
-│   │   ├── FilterButtons.jsx    # 전체 / 진행 중 / 완료 필터 탭
-│   │   ├── CategoryFilter.jsx   # 카테고리별 배지 필터 버튼
-│   │   ├── TodoList.jsx         # 할 일 목록, completion 체크, 인라인 수정 폼, 타임스탬프
-│   │   ├── ClearCompleted.jsx   # 완료 항목 일괄 삭제 버튼
-│   │   ├── TodoChart.jsx        # Chart.js 기반 진행률 도넛 차트
-│   │   ├── DataBackup.jsx       # JSON 백업 내보내기 & 불러오기 컴포넌트
-│   │   ├── PwaInstallPrompt.jsx # PWA 앱 설치 권유 배너 & 오프라인 상태 표시 바
-│   │   └── Toast.jsx            # 0.2s 등장 & 0.5s 소멸 스르륵 토스트 알림
+│   │   ├── DarkModeToggle.jsx  # ☀️/🌙 다크 모드 토글 버튼
+│   │   ├── Quote.jsx           # 명언 API 호출 및 80px 고정 박스
+│   │   ├── TodoInput.jsx       # 입력 폼 및 카테고리 선택 Dropdown
+│   │   ├── TodoSearch.jsx      # 🔍 돋보기 토글형 실시간 검색창
+│   │   ├── TodoSort.jsx        # 🔀 다중 정렬 선택 Dropdown
+│   │   ├── FilterButtons.jsx   # 전체 / 진행 중 / 완료 필터 탭
+│   │   ├── CategoryFilter.jsx  # 공부 / 업무 / 개인 / 기타 태그 필터
+│   │   ├── TodoList.jsx        # @hello-pangea/dnd 드래그 앤 드롭 할 일 목록
+│   │   ├── ClearCompleted.jsx  # 완료 항목 일괄 삭제
+│   │   ├── TodoChart.jsx       # Chart.js 기반 도넛 차트
+│   │   ├── DataBackup.jsx      # JSON 백업 다운로드 및 복원
+│   │   ├── PwaInstallPrompt.jsx# PWA 앱 설치 배너 & 오프라인 바
+│   │   ├── Navigation.jsx      # 할 일 목록 / 상세 통계 상단 NavLink
+│   │   └── Toast.jsx           # 스르륵 토스트 알림 메시지
 │   ├── pages/
-│   │   ├── MainPage.jsx         # 메인 할 일 관리 통합 페이지
-│   │   └── StatsPage.jsx        # 상세 수치 통계 카드, 차트, 카테고리 분포 및 데이터 백업 페이지
-│   ├── App.jsx                  # Header Nav, DarkModeToggle, Router Routes, Toast
-│   ├── App.css                  # 440px 모던 카드 레이아웃, 다크모드, 토스트 Keyframes
-│   └── main.jsx                 # HashRouter 적용 및 최상위 렌더링
-├── index.html                   # PWA 모바일 메타 태그 및 앱 스펙 지정
-├── vite.config.js               # Vite PWA 플러그인 및 GitHub Pages Base Path 설정
+│   │   ├── MainPage.jsx        # 할 일 관리 메인 페이지
+│   │   └── StatsPage.jsx       # 통계 대시보드 및 백업 페이지
+│   ├── App.jsx                 # 최상위 레이아웃, 헤더, 라우팅
+│   ├── App.css                 # 440px 중앙 고정 레이아웃 & Pretendard CSS
+│   └── main.jsx                # React DOM 렌더링 및 HashRouter 감싸기
 └── package.json
