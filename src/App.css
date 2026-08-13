@@ -1,55 +1,56 @@
 /* ==========================================================================
-   1. GLOBAL RESET & BASE STYLES
+   1. GLOBAL RESET & WEBFONT (Pretendard 적용)
    ========================================================================== */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  background-color: #f8fafc;
+  background-color: #f1f5f9;
   color: #0f172a;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 20px 10px;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  padding: 30px 12px;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* Global Dark Mode Scope */
+/* 다크 모드 전역 스코프 */
 body.dark-mode, html.dark body {
   background-color: #0f172a;
   color: #f8fafc;
 }
 
 /* ==========================================================================
-   2. APP CONTAINER & CARD LAYOUT (440px Fixed)
+   2. APP CONTAINER & CARD LAYOUT (440px 고정)
    ========================================================================== */
 .app-container {
   width: 100%;
   max-width: 440px;
-  min-height: 560px;
+  min-height: 580px;
   margin: 0 auto;
   background-color: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   padding: 24px;
   display: flex;
   flex-direction: column;
   position: relative;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 body.dark-mode .app-container {
   background-color: #1e293b;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
-/* Header & Navigation */
+/* 상단 헤더 & 네비게이션 */
 .header-nav {
   display: flex;
   justify-content: space-between;
@@ -65,12 +66,12 @@ body.dark-mode .header-nav {
 
 .nav-links {
   display: flex;
-  gap: 12px;
+  gap: 8px;
 }
 
 .nav-link {
   text-decoration: none;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: #64748b;
   padding: 6px 12px;
@@ -92,40 +93,52 @@ body.dark-mode .nav-link.active {
   background-color: #1e3a8a;
 }
 
+/* 다크 모드 토글 버튼 정밀 스타일 */
 .dark-mode-toggle {
-  background: none;
-  border: none;
-  font-size: 20px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  font-size: 18px;
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
+  padding: 6px 10px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .dark-mode-toggle:hover {
-  background-color: #f1f5f9;
+  background-color: #e2e8f0;
+  transform: scale(1.05);
+}
+
+body.dark-mode .dark-mode-toggle {
+  background-color: #334155;
+  border-color: #475569;
+  color: #f8fafc;
 }
 
 body.dark-mode .dark-mode-toggle:hover {
-  background-color: #334155;
+  background-color: #475569;
 }
 
 /* ==========================================================================
    3. COMPONENTS STYLES
    ========================================================================== */
 
-/* Quote Box (Height: 80px fixed) */
+/* 명언 상자 (80px 고정 규격) */
 .quote-box {
   height: 80px;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
-  padding: 12px 16px;
-  margin-bottom: 20px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
   background-color: #f8fafc;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
+  gap: 10px;
   overflow: hidden;
 }
 
@@ -145,6 +158,7 @@ body.dark-mode .quote-box {
 .quote-text {
   font-size: 13px;
   line-height: 1.4;
+  font-weight: 500;
   color: #334155;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -160,8 +174,12 @@ body.dark-mode .quote-text {
 .quote-author {
   font-size: 11px;
   color: #64748b;
-  margin-top: 4px;
+  margin-top: 2px;
   text-align: right;
+}
+
+body.dark-mode .quote-author {
+  color: #94a3b8;
 }
 
 .quote-refresh-btn {
@@ -171,7 +189,7 @@ body.dark-mode .quote-text {
   cursor: pointer;
   padding: 6px;
   border-radius: 50%;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s ease;
   flex-shrink: 0;
 }
 
@@ -179,21 +197,23 @@ body.dark-mode .quote-text {
   transform: rotate(180deg);
 }
 
-/* Todo Input Form */
+/* Todo 입력 폼 */
 .todo-input-form {
   display: flex;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .category-select {
-  padding: 10px;
+  padding: 10px 12px;
   border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  border-radius: 10px;
   background-color: #ffffff;
   color: #0f172a;
   font-size: 13px;
+  font-weight: 500;
   outline: none;
+  cursor: pointer;
 }
 
 body.dark-mode .category-select {
@@ -206,7 +226,7 @@ body.dark-mode .category-select {
   flex: 1;
   padding: 10px 14px;
   border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 14px;
   outline: none;
   transition: border-color 0.2s ease;
@@ -227,8 +247,9 @@ body.dark-mode .todo-input {
   background-color: #2563eb;
   color: #ffffff;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -237,13 +258,14 @@ body.dark-mode .todo-input {
   background-color: #1d4ed8;
 }
 
-/* Toolbar (Search & Sort) */
+/* 툴바 정렬 (검색 바 + 정렬 셀렉트 정밀 레이아웃) */
 .toolbar-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
   margin-bottom: 12px;
+  height: 36px;
 }
 
 .todo-search-container {
@@ -253,11 +275,19 @@ body.dark-mode .todo-input {
 }
 
 .search-toggle-btn {
-  background: none;
-  border: none;
-  font-size: 16px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  font-size: 14px;
   cursor: pointer;
-  padding: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+body.dark-mode .search-toggle-btn {
+  background-color: #0f172a;
+  border-color: #334155;
+  color: #f8fafc;
 }
 
 .search-input {
@@ -265,8 +295,9 @@ body.dark-mode .todo-input {
   opacity: 0;
   padding: 6px 0;
   border: 1px solid transparent;
-  border-radius: 6px;
-  transition: all 0.3s ease;
+  border-radius: 8px;
+  font-size: 13px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .search-input.open {
@@ -274,25 +305,26 @@ body.dark-mode .todo-input {
   opacity: 1;
   padding: 6px 10px;
   border-color: #cbd5e1;
-  margin-left: 4px;
+  margin-left: 6px;
 }
 
 body.dark-mode .search-input {
   background-color: #0f172a;
+  border-color: #334155;
   color: #f8fafc;
 }
 
-/* Sort Control */
+/* 정렬 셀렉트 스타일 */
 .todo-sort-container {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .sort-label {
   font-size: 12px;
-  color: #64748b;
   font-weight: 600;
+  color: #64748b;
 }
 
 body.dark-mode .sort-label {
@@ -300,13 +332,15 @@ body.dark-mode .sort-label {
 }
 
 .sort-select {
-  padding: 4px 8px;
+  padding: 6px 10px;
   border: 1px solid #cbd5e1;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 12px;
+  font-weight: 500;
   background-color: #ffffff;
   color: #0f172a;
   outline: none;
+  cursor: pointer;
 }
 
 body.dark-mode .sort-select {
@@ -315,7 +349,7 @@ body.dark-mode .sort-select {
   color: #f8fafc;
 }
 
-/* Category Filter Tags */
+/* 카테고리 태그 필터 */
 .category-filter-group {
   display: flex;
   gap: 6px;
@@ -324,39 +358,52 @@ body.dark-mode .sort-select {
   padding-bottom: 4px;
 }
 
+.category-filter-group::-webkit-scrollbar {
+  height: 4px;
+}
+
+.category-filter-group::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 2px;
+}
+
 .cat-btn {
-  padding: 4px 10px;
+  padding: 5px 12px;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  background-color: #ffffff;
+  border-radius: 20px;
+  background-color: #f8fafc;
   font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s ease;
 }
 
 .cat-btn.active {
-  background-color: #0f172a;
+  background-color: #2563eb;
   color: #ffffff;
-  border-color: #0f172a;
+  border-color: #2563eb;
+  font-weight: 600;
 }
 
 body.dark-mode .cat-btn {
   background-color: #0f172a;
   border-color: #334155;
-  color: #cbd5e1;
+  color: #94a3b8;
 }
 
 body.dark-mode .cat-btn.active {
   background-color: #38bdf8;
   color: #0f172a;
   border-color: #38bdf8;
+  font-weight: 700;
 }
 
-/* Filter Buttons (Status) */
+/* 상태 필터 (전체 / 진행 중 / 완료) */
 .filter-buttons {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 16px;
   border-bottom: 1px solid #f1f5f9;
   padding-bottom: 12px;
@@ -380,8 +427,9 @@ body.dark-mode .filter-buttons {
 }
 
 .filter-btn.active {
-  background-color: #2563eb;
+  background-color: #0f172a;
   color: #ffffff;
+  font-weight: 600;
 }
 
 body.dark-mode .filter-btn {
@@ -392,6 +440,7 @@ body.dark-mode .filter-btn {
 body.dark-mode .filter-btn.active {
   background-color: #2563eb;
   color: #ffffff;
+  font-weight: 600;
 }
 
 /* ==========================================================================
@@ -403,18 +452,34 @@ body.dark-mode .filter-btn.active {
   overflow-y: auto;
   max-height: 280px;
   margin-bottom: 16px;
+  padding-right: 2px;
+}
+
+.todo-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.todo-list::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 2px;
+}
+
+body.dark-mode .todo-list::-webkit-scrollbar-thumb {
+  background-color: #334155;
 }
 
 .todo-item {
   padding: 10px 12px;
   background-color: #f8fafc;
-  border-radius: 8px;
+  border-radius: 10px;
   margin-bottom: 8px;
-  transition: background-color 0.2s ease;
+  border: 1px solid #f1f5f9;
+  transition: all 0.2s ease;
 }
 
 body.dark-mode .todo-item {
   background-color: #0f172a;
+  border-color: #1e293b;
 }
 
 .todo-content {
@@ -433,6 +498,7 @@ body.dark-mode .todo-item {
   width: 18px;
   height: 18px;
   cursor: pointer;
+  accent-color: #2563eb;
 }
 
 .todo-text-group {
@@ -447,13 +513,14 @@ body.dark-mode .todo-item {
   display: flex;
   align-items: center;
   gap: 6px;
+  overflow: hidden;
 }
 
-/* Category Badges */
+/* 카테고리 배지 시각적 구분 보장 */
 .category-badge {
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 4px;
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 6px;
   font-weight: 700;
   flex-shrink: 0;
 }
@@ -470,6 +537,7 @@ body.dark-mode .badge-etc { background-color: #581c87; color: #f0abfc; }
 
 .todo-text {
   font-size: 14px;
+  font-weight: 500;
   color: #0f172a;
   white-space: nowrap;
   overflow: hidden;
@@ -492,7 +560,7 @@ body.dark-mode .todo-text {
 
 .todo-actions {
   display: flex;
-  gap: 4px;
+  gap: 2px;
 }
 
 .edit-btn, .delete-btn {
@@ -501,9 +569,19 @@ body.dark-mode .todo-text {
   font-size: 14px;
   cursor: pointer;
   padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
 }
 
-/* Edit Form inside Item */
+.edit-btn:hover, .delete-btn:hover {
+  background-color: #e2e8f0;
+}
+
+body.dark-mode .edit-btn:hover, body.dark-mode .delete-btn:hover {
+  background-color: #334155;
+}
+
+/* 인라인 수정 폼 */
 .edit-form {
   display: flex;
   gap: 6px;
@@ -513,7 +591,7 @@ body.dark-mode .todo-text {
 .edit-category-select, .edit-input {
   padding: 4px 8px;
   border: 1px solid #cbd5e1;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 12px;
 }
 
@@ -524,7 +602,7 @@ body.dark-mode .todo-text {
 .save-btn, .cancel-btn {
   padding: 4px 8px;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 12px;
   cursor: pointer;
 }
@@ -532,7 +610,7 @@ body.dark-mode .todo-text {
 .save-btn { background-color: #16a34a; color: white; }
 .cancel-btn { background-color: #dc2626; color: white; }
 
-/* Empty & Clear Section */
+/* 데이터 없음 및 하단 버튼 */
 .empty-state {
   text-align: center;
   padding: 40px 0;
@@ -550,6 +628,7 @@ body.dark-mode .todo-text {
   border: none;
   color: #dc2626;
   font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
   padding: 4px 8px;
 }
@@ -571,7 +650,8 @@ body.dark-mode .todo-text {
   padding: 10px 20px;
   border-radius: 20px;
   font-size: 13px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  font-weight: 500;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
   z-index: 1000;
   animation: toastSlideIn 0.2s ease-out, toastFadeOut 0.5s ease-in 2.3s forwards;
 }
@@ -579,7 +659,7 @@ body.dark-mode .todo-text {
 body.dark-mode .toast-container {
   background-color: #38bdf8;
   color: #0f172a;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 @keyframes toastSlideIn {
@@ -602,12 +682,12 @@ body.dark-mode .toast-container {
   }
 }
 
-/* PWA Install Banner & Offline Bar */
+/* PWA 설치 배너 및 오프라인 바 */
 .pwa-banner {
   background-color: #eff6ff;
   border: 1px solid #bfdbfe;
   padding: 10px 14px;
-  border-radius: 8px;
+  border-radius: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -626,7 +706,7 @@ body.dark-mode .pwa-banner {
   color: #991b1b;
   text-align: center;
   padding: 6px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 12px;
   margin-bottom: 12px;
 }
