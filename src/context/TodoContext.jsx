@@ -28,7 +28,7 @@ export const TodoProvider = ({ children }) => {
 
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
-  // 다크 모드 동기화 (html 및 body 전체 클래스 동시 부여)
+  // 다크 모드 동기화 (body 및 html 클래스 동시 제어)
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add('dark', 'dark-mode');
@@ -41,7 +41,7 @@ export const TodoProvider = ({ children }) => {
     }
   }, [isDarkMode]);
 
-  // 네트워크 감지
+  // 온라인 / 오프라인 감지
   useEffect(() => {
     const handleOnline = () => {
       setIsOnline(true);
@@ -49,7 +49,7 @@ export const TodoProvider = ({ children }) => {
     };
     const handleOffline = () => {
       setIsOnline(false);
-      setToastMessage('📡 오프라인 상태입니다. (저장 기능은 정상 작동합니다)');
+      setToastMessage('📡 오프라인 상태입니다. (저장 기능은 오프라인에서도 작동합니다)');
     };
 
     window.addEventListener('online', handleOnline);

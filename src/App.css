@@ -1,5 +1,5 @@
 /* ==========================================================================
-   기본 리셋 및 전역 폰트 규격
+   전역 리셋 및 폰트 스택
    ========================================================================== */
 * {
   box-sizing: border-box;
@@ -9,7 +9,7 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background-color: #f1f5f9;
+  background-color: #f8fafc;
   color: #1e293b;
   min-height: 100vh;
   display: flex;
@@ -21,8 +21,8 @@ body {
 
 body.dark,
 html.dark {
-  background-color: #0f172a;
-  color: #f8fafc;
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
 }
 
 #root {
@@ -32,7 +32,7 @@ html.dark {
 }
 
 /* ==========================================================================
-   440px 고정 가로폭 모던 카드 컨테이너
+   440px 고정 가로폭 모던 카드 컨테이너 (중앙 배치)
    ========================================================================== */
 .app-container {
   width: 100%;
@@ -46,13 +46,14 @@ html.dark {
   display: flex;
   flex-direction: column;
   position: relative;
+  margin: 0 auto;
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 body.dark .app-container {
-  background-color: #1e293b;
-  border-color: #334155;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
 }
 
 /* Header & Nav */
@@ -115,7 +116,7 @@ body.dark .dark-mode-toggle {
 }
 
 /* ==========================================================================
-   명언 박스 (80px 고정 규격 + 우측 새로고침 버튼)
+   명언 박스 (80px 고정 규격 + 테두리 + 우측 🔄 버튼)
    ========================================================================== */
 .quote-box {
   height: 80px;
@@ -379,7 +380,7 @@ body.dark .category-badge-btn.active {
 }
 
 /* ==========================================================================
-   할 일 리스트 시각적 분별력 강화 (여백 및 배지 구분)
+   할 일 리스트 분별력 강화 (여백, 배지 구분, 타이포그래피)
    ========================================================================== */
 .todo-list {
   list-style: none;
@@ -501,6 +502,33 @@ body.dark .edit-btn:hover, body.dark .delete-btn:hover {
   background-color: #334155;
 }
 
+/* 완료 항목 전체 삭제 버튼 */
+.clear-completed-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.clear-completed-btn {
+  background: none;
+  border: none;
+  font-size: 0.78rem;
+  color: #ef4444;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.clear-completed-btn:hover {
+  background-color: #fef2f2;
+}
+
+body.dark .clear-completed-btn:hover {
+  background-color: #450a0a;
+}
+
 /* ==========================================================================
    토스트 알림 애니메이션 (0.2s 슬라이드 인 & 0.5s 부드러운 퇴장)
    ========================================================================== */
@@ -554,7 +582,7 @@ body.dark .toast-content {
 }
 
 /* ==========================================================================
-   상세 통계 페이지 폰트 & 고품질 디자인 규격
+   상세 통계 페이지 폰트 & 모던 리포트 규격
    ========================================================================== */
 .stats-page {
   display: flex;
@@ -598,7 +626,6 @@ body.dark .stat-card {
   font-weight: 700;
   color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
 }
 
 body.dark .stat-label {
@@ -622,6 +649,58 @@ body.dark .stat-value {
 body.dark .stat-value.active-val { color: #fbbf24; }
 body.dark .stat-value.completed-val { color: #4ade80; }
 body.dark .stat-value.rate-val { color: #60a5fa; }
+
+/* 데이터 백업 / 복원 스타일 */
+.backup-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+body.dark .backup-section {
+  border-top-color: #334155;
+}
+
+.backup-section h3 {
+  font-size: 0.92rem;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+body.dark .backup-section h3 {
+  color: #f1f5f9;
+}
+
+.backup-desc {
+  font-size: 0.76rem;
+  color: #64748b;
+  margin-bottom: 12px;
+}
+
+.data-backup-container {
+  display: flex;
+  gap: 8px;
+}
+
+.backup-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+}
+
+.export-btn {
+  background-color: #0284c7;
+  color: #ffffff;
+}
+
+.import-btn {
+  background-color: #0d9488;
+  color: #ffffff;
+}
 
 /* PWA 안내 바 */
 .pwa-status-wrapper {

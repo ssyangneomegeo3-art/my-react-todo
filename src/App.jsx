@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import './App.css';
 import Navigation from './components/Navigation';
 import DarkModeToggle from './components/DarkModeToggle';
 import PwaInstallPrompt from './components/PwaInstallPrompt';

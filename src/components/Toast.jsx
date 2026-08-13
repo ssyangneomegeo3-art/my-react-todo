@@ -7,7 +7,7 @@ function Toast() {
   useEffect(() => {
     if (!toastMessage) return;
 
-    // 0.2초 등장 + 1.9초 대기 + 0.5초 퇴장 = 총 2.6초 후 DOM에서 제거
+    // 0.2초 슬라이드 인 + 1.9초 대기 + 0.5초 퇴장 = 2.6초 후 스토어 상태 초기화
     const timer = setTimeout(() => {
       clearToast();
     }, 2600);
