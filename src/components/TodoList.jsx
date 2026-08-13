@@ -1,75 +1,102 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
-export default function TodoList({ todos, onToggleTodo, onDeleteTodo, onEditTodo }) {
-  // 1. 현재 수정 중인 할 일의 ID와 수정 중인 입력 텍스트 상태
+// 타임스탬프 복원 도우미 함수 (createdAt이 없으면 id 기반으로 시각 복원)
+const getDisplayTime = (todo) => {
+  if (todo.createdAt) return todo.createdAt;
+
+  // id가 Date.now() 타임스탬프 숫자일 경우 기존 작성 시각 복원
+  if (todo.id && typeof todo.id === 'number') {
+    const date = new Date(todo.id);
+    if (!isNaN(date.getTime())) {
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${month}-${day} ${hours}:${minutes}`;
+    }
+  }
+  return '';
+};
+
+function TodoList({ todos, toggleTodo, deleteTodo, editTodo }) {
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState('');
 
-  // 수정 시작 모드로 전환
   const handleStartEdit = (todo) => {
     setEditingId(todo.id);
     setEditText(todo.text);
   };
 
-  // 수정 완료 및 저장
   const handleSaveEdit = (id) => {
     if (!editText.trim()) return;
-    onEditTodo(id, editText);
-    setEditingId(null); // 수정 모드 종료
-  };
-
-  // 수정 취소
-  const handleCancelEdit = () => {
+    editTodo(id, editText.trim());
     setEditingId(null);
   };
 
-  // 키보드 이벤트 (Enter 저장, Esc 취소)
   const handleKeyDown = (e, id) => {
     if (e.key === 'Enter') {
       handleSaveEdit(id);
     } else if (e.key === 'Escape') {
-      handleCancelEdit();
+      setEditingId(null);
     }
   };
 
   if (todos.length === 0) {
-    return <p style={{ color: '#94a3b8', textAlign: 'center', margin: '20px 0' }}>등록된 할 일이 없습니다.</p>;
+    return <p className="empty-msg">목록이 비어 있습니다.</p>;
   }
 
   return (
     <ul className="todo-list">
-      {todos.map((todo) => (
-        <li key={todo.id} className="todo-item">
-          {/* editingId와 현재 todo.id가 같으면 수정 폼을, 다르면 일반 항목 표시 */}
-          {editingId === todo.id ? (
-            <div className="todo-edit-form">
-              <input
-                type="text"
-                className="todo-edit-input"
-                value={editText}
-                onChange={(e) => setEditText(e.target.value)}
-                onKeyDown={(e) => handleKeyDown(e, todo.id)}
-                autoFocus
-              />
-              <button onClick={() => handleSaveEdit(todo.id)} className="todo-save-btn">저장</button>
-              <button onClick={handleCancelEdit} className="todo-cancel-btn">취소</button>
-            </div>
-          ) : (
-            <>
-              <span
-                onClick={() => onToggleTodo(todo.id)}
-                className={`todo-text ${todo.completed ? 'completed' : ''}`}
-              >
-                {todo.completed ? '✅ ' : '⬜ '} {todo.text}
-              </span>
-              <div className="todo-btn-group">
-                <button onClick={() => handleStartEdit(todo)} className="todo-edit-btn">수정</button>
-                <button onClick={() => onDeleteTodo(todo.id)} className="todo-delete-btn">삭제</button>
+      {todos.map((todo) => {
+        // 기존 데이터와 신규 데이터 모두 처리 가능한 타임스탬프 가져오기
+        const displayTime = getDisplayTime(todo);
+
+        return (
+          <li key={todo.id} className={`todo-item ${todo.completed ? 'completed' : ''}`}>
+            {editingId === todo.id ? (
+              <div className="edit-container">
+                <input
+                  type="text"
+                  className="edit-input"
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(e, todo.id)}
+                  autoFocus
+                />
+                <button className="save-btn" onClick={() => handleSaveEdit(todo.id)}>
+                  저장
+                </button>
+                <button className="cancel-btn" onClick={() => setEditingId(null)}>
+                  취소
+                </button>
               </div>
-            </>
-          )}
-        </li>
-      ))}
+            ) : (
+              <div className="todo-content-wrapper">
+                <div className="todo-main-info">
+                  <input
+                    type="checkbox"
+                    checked={todo.completed}
+                    onChange={() => toggleTodo(todo.id)}
+                  />
+                  <span className="todo-text" onClick={() => handleStartEdit(todo)}>
+                    {todo.text}
+                  </span>
+                </div>
+                <div className="todo-right-info">
+                  {displayTime && (
+                    <span className="todo-timestamp">{displayTime}</span>
+                  )}
+                  <button className="delete-btn" onClick={() => deleteTodo(todo.id)}>
+                    🗑️
+                  </button>
+                </div>
+              </div>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 }
+
+export default TodoList;

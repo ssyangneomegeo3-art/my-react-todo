@@ -1,35 +1,42 @@
-import { useState, useEffect } from 'react';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import DarkModeToggle from './components/DarkModeToggle';
 import Quote from './components/Quote';
 import TodoInput from './components/TodoInput';
-import TodoList from './components/TodoList';
 import TodoChart from './components/TodoChart';
-import ClearCompleted from './components/ClearCompleted';
 import FilterButtons from './components/FilterButtons';
-import DarkModeToggle from './components/DarkModeToggle';
+import TodoList from './components/TodoList';
+import ClearCompleted from './components/ClearCompleted';
+import './App.css';
 
-export default function App() {
+// 공통 날짜 포맷팅 도우미 함수 (MM-DD HH:mm)
+const getFormattedDate = () => {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const date = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  return `${month}-${date} ${hours}:${minutes}`;
+};
+
+function App() {
   const [todos, setTodos] = useState(() => {
-    const savedTodos = localStorage.getItem('todos');
-    return savedTodos ? JSON.parse(savedTodos) : [];
+    const saved = localStorage.getItem('todos');
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [filter, setFilter] = useState('all');
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem('darkMode');
-    return savedTheme ? JSON.parse(savedTheme) : false;
+    const saved = localStorage.getItem('darkMode');
+    return saved ? JSON.parse(saved) : false;
   });
 
   useEffect(() => {
     localStorage.setItem('todos', JSON.stringify(todos));
   }, [todos]);
 
-  // 다크 모드 변경 시 localStorage 저장 및 document.body 태그 클래스 토글
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
-    
-    // 바깥쪽 전체 배경(body)에 dark-mode 클래스 적용/해제
     if (isDarkMode) {
       document.body.classList.add('dark-mode');
     } else {
@@ -37,36 +44,42 @@ export default function App() {
     }
   }, [isDarkMode]);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode((prev) => !prev);
-  };
-
   const addTodo = (text) => {
-    setTodos([...todos, { id: Date.now(), text, completed: false }]);
+    const newTodo = {
+      id: Date.now(),
+      text,
+      completed: false,
+      createdAt: getFormattedDate(),
+    };
+    setTodos((prev) => [...prev, newTodo]);
   };
 
   const toggleTodo = (id) => {
-    setTodos(
-      todos.map((todo) =>
+    setTodos((prev) =>
+      prev.map((todo) =>
         todo.id === id ? { ...todo, completed: !todo.completed } : todo
       )
     );
   };
 
   const deleteTodo = (id) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
+    setTodos((prev) => prev.filter((todo) => todo.id !== id));
   };
 
   const editTodo = (id, newText) => {
-    setTodos(
-      todos.map((todo) =>
+    setTodos((prev) =>
+      prev.map((todo) =>
         todo.id === id ? { ...todo, text: newText } : todo
       )
     );
   };
 
   const clearCompleted = () => {
-    setTodos(todos.filter((todo) => !todo.completed));
+    setTodos((prev) => prev.filter((todo) => !todo.completed));
+  };
+
+  const toggleDarkMode = () => {
+    setIsDarkMode((prev) => !prev);
   };
 
   const filteredTodos = todos.filter((todo) => {
@@ -75,24 +88,26 @@ export default function App() {
     return true;
   });
 
-  const completedCount = todos.filter((t) => t.completed).length;
-  const pendingCount = todos.length - completedCount;
-
   return (
-    <div className={`app-container ${isDarkMode ? 'dark-mode' : ''}`}>
-      <DarkModeToggle isDarkMode={isDarkMode} onToggle={toggleDarkMode} />
-      <h1 className="app-title">📋 오늘의 할 일 목록</h1>
+    <div className="app-container">
+      <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
+      <h1>📋 오늘의 할 일 목록</h1>
       <Quote />
-      <TodoInput onAddTodo={addTodo} />
-      <TodoChart completedCount={completedCount} pendingCount={pendingCount} />
+      <TodoInput addTodo={addTodo} />
+      <TodoChart todos={todos} />
       <FilterButtons filter={filter} setFilter={setFilter} />
       <TodoList
         todos={filteredTodos}
-        onToggleTodo={toggleTodo}
-        onDeleteTodo={deleteTodo}
-        onEditTodo={editTodo}
+        toggleTodo={toggleTodo}
+        deleteTodo={deleteTodo}
+        editTodo={editTodo}
       />
-      <ClearCompleted onClearCompleted={clearCompleted} completedCount={completedCount} />
+      <ClearCompleted
+        completedCount={todos.filter((t) => t.completed).length}
+        clearCompleted={clearCompleted}
+      />
     </div>
   );
 }
+
+export default App;
