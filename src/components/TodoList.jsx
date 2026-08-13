@@ -1,96 +1,113 @@
 import React, { useState } from 'react';
 import { useTodo } from '../context/TodoContext';
 
-const CATEGORIES = ['공부', '업무', '개인', '기타'];
+const TodoItem = React.memo(({ todo }) => {
+  const { toggleTodo, deleteTodo, editTodo } = useTodo();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editText, setEditText] = useState(todo.text);
+  const [editCategory, setEditCategory] = useState(todo.category || '기타');
 
-function TodoList() {
-  const { filteredTodos, toggleTodo, deleteTodo, editTodo } = useTodo();
-  const [editingId, setEditingId] = useState(null);
-  const [editText, setEditText] = useState('');
-  const [editCategory, setEditCategory] = useState('개인');
-
-  const handleStartEdit = (todo) => {
-    setEditingId(todo.id);
-    setEditText(todo.text);
-    setEditCategory(todo.category || '기타');
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+    if (editText.trim()) {
+      editTodo(todo.id, editText, editCategory);
+      setIsEditing(false);
+    }
   };
 
-  const handleSaveEdit = (id) => {
-    if (!editText.trim()) return;
-    editTodo(id, editText, editCategory);
-    setEditingId(null);
+  const getCategoryClass = (cat) => {
+    switch (cat) {
+      case '공부': return 'badge-study';
+      case '업무': return 'badge-work';
+      case '개인': return 'badge-personal';
+      default: return 'badge-etc';
+    }
   };
 
-  const handleCancelEdit = () => {
-    setEditingId(null);
-  };
+  const formattedDate = todo.createdAt
+    ? new Date(todo.createdAt).toLocaleDateString('ko-KR', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : '';
+
+  return (
+    <li className={`todo-item ${todo.completed ? 'completed' : ''}`}>
+      {isEditing ? (
+        <form onSubmit={handleEditSubmit} className="edit-form">
+          <select
+            value={editCategory}
+            onChange={(e) => setEditCategory(e.target.value)}
+            className="edit-category-select"
+          >
+            <option value="공부">공부</option>
+            <option value="업무">업무</option>
+            <option value="개인">개인</option>
+            <option value="기타">기타</option>
+          </select>
+          <input
+            type="text"
+            value={editText}
+            onChange={(e) => setEditText(e.target.value)}
+            className="edit-input"
+            autoFocus
+          />
+          <button type="submit" className="save-btn">저장</button>
+          <button type="button" onClick={() => setIsEditing(false)} className="cancel-btn">취소</button>
+        </form>
+      ) : (
+        <div className="todo-content">
+          <label className="checkbox-container">
+            <input
+              type="checkbox"
+              checked={todo.completed}
+              onChange={() => toggleTodo(todo.id)}
+            />
+            <span className="checkmark"></span>
+          </label>
+          
+          <div className="todo-text-group">
+            <div className="todo-header-row">
+              <span className={`category-badge ${getCategoryClass(todo.category)}`}>
+                {todo.category || '기타'}
+              </span>
+              <span className={`todo-text ${todo.completed ? 'strikethrough' : ''}`}>
+                {todo.text}
+              </span>
+            </div>
+            {formattedDate && <span className="todo-date">{formattedDate}</span>}
+          </div>
+
+          <div className="todo-actions">
+            <button onClick={() => setIsEditing(true)} className="edit-btn" title="수정">✏️</button>
+            <button onClick={() => deleteTodo(todo.id)} className="delete-btn" title="삭제">🗑️</button>
+          </div>
+        </div>
+      )}
+    </li>
+  );
+});
+
+const TodoList = () => {
+  const { filteredTodos } = useTodo();
 
   if (filteredTodos.length === 0) {
-    return <div className="empty-message" style={{ textAlign: 'center', padding: '24px 0', color: '#94a3b8', fontSize: '0.85rem' }}>등록된 할 일이 없습니다.</div>;
+    return (
+      <div className="empty-state">
+        <p>📋 표시할 할 일이 없습니다.</p>
+      </div>
+    );
   }
 
   return (
     <ul className="todo-list">
       {filteredTodos.map((todo) => (
-        <li key={todo.id} className={`todo-item ${todo.completed ? 'completed' : ''}`}>
-          {editingId === todo.id ? (
-            <div className="inline-edit-form" style={{ display: 'flex', gap: '6px', width: '100%' }}>
-              <select
-                value={editCategory}
-                onChange={(e) => setEditCategory(e.target.value)}
-                className="edit-category-select"
-                style={{ padding: '4px 6px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
-              >
-                {CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="text"
-                value={editText}
-                onChange={(e) => setEditText(e.target.value)}
-                className="edit-input"
-                style={{ flex: 1, padding: '4px 8px', borderRadius: '6px', border: '1px solid #2563eb' }}
-                autoFocus
-              />
-              <button onClick={() => handleSaveEdit(todo.id)} className="save-btn" style={{ padding: '4px 8px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
-                저장
-              </button>
-              <button onClick={handleCancelEdit} className="cancel-btn" style={{ padding: '4px 8px', background: '#64748b', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
-                취소
-              </button>
-            </div>
-          ) : (
-            <>
-              <div className="todo-content">
-                <input
-                  type="checkbox"
-                  checked={todo.completed}
-                  onChange={() => toggleTodo(todo.id)}
-                  className="todo-checkbox"
-                />
-                <span className={`category-tag category-${todo.category || '기타'}`}>
-                  {todo.category || '기타'}
-                </span>
-                <span className="todo-text">{todo.text}</span>
-              </div>
-              <div className="todo-actions">
-                <span className="todo-timestamp">{todo.createdAt}</span>
-                <button onClick={() => handleStartEdit(todo)} className="edit-btn" title="수정">
-                  ✏️
-                </button>
-                <button onClick={() => deleteTodo(todo.id)} className="delete-btn" title="삭제">
-                  🗑️
-                </button>
-              </div>
-            </>
-          )}
-        </li>
+        <TodoItem key={todo.id} todo={todo} />
       ))}
     </ul>
   );
-}
+};
 
 export default React.memo(TodoList);

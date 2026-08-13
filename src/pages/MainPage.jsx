@@ -2,25 +2,30 @@ import React from 'react';
 import Quote from '../components/Quote';
 import TodoInput from '../components/TodoInput';
 import TodoSearch from '../components/TodoSearch';
-import CategoryFilter from '../components/CategoryFilter';
 import FilterButtons from '../components/FilterButtons';
+import CategoryFilter from '../components/CategoryFilter';
+import TodoSort from '../components/TodoSort';
 import TodoList from '../components/TodoList';
 import ClearCompleted from '../components/ClearCompleted';
 
-function MainPage() {
+const MainPage = () => {
   return (
-    <div className="page-container main-page">
+    <div className="main-page">
       <Quote />
       <TodoInput />
-      <div className="filter-search-wrapper">
+      
+      <div className="toolbar-section">
         <TodoSearch />
-        <FilterButtons />
+        <TodoSort />
       </div>
+
       <CategoryFilter />
+      <FilterButtons />
+      
       <TodoList />
       <ClearCompleted />
     </div>
   );
-}
+};
 
-export default MainPage;
+export default React.memo(MainPage);
