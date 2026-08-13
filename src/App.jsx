@@ -1,22 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import DarkModeToggle from './components/DarkModeToggle';
-import Quote from './components/Quote';
-import TodoInput from './components/TodoInput';
-import TodoChart from './components/TodoChart';
-import FilterButtons from './components/FilterButtons';
-import TodoList from './components/TodoList';
-import ClearCompleted from './components/ClearCompleted';
+import { Routes, Route } from 'react-router-dom';
+import Navigation from './components/Navigation';
+import MainPage from './pages/MainPage';
+import StatsPage from './pages/StatsPage';
 import './App.css';
 
-// 공통 날짜 포맷팅 도우미 함수 (MM-DD HH:mm)
-const getFormattedDate = () => {
-  const now = new Date();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const date = String(now.getDate()).padStart(2, '0');
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  return `${month}-${date} ${hours}:${minutes}`;
-};
 
 function App() {
   const [todos, setTodos] = useState(() => {
@@ -49,7 +37,6 @@ function App() {
       id: Date.now(),
       text,
       completed: false,
-      createdAt: getFormattedDate(),
     };
     setTodos((prev) => [...prev, newTodo]);
   };
@@ -82,30 +69,29 @@ function App() {
     setIsDarkMode((prev) => !prev);
   };
 
-  const filteredTodos = todos.filter((todo) => {
-    if (filter === 'active') return !todo.completed;
-    if (filter === 'completed') return todo.completed;
-    return true;
-  });
-
   return (
     <div className="app-container">
       <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
-      <h1>📋 오늘의 할 일 목록</h1>
-      <Quote />
-      <TodoInput addTodo={addTodo} />
-      <TodoChart todos={todos} />
-      <FilterButtons filter={filter} setFilter={setFilter} />
-      <TodoList
-        todos={filteredTodos}
-        toggleTodo={toggleTodo}
-        deleteTodo={deleteTodo}
-        editTodo={editTodo}
-      />
-      <ClearCompleted
-        completedCount={todos.filter((t) => t.completed).length}
-        clearCompleted={clearCompleted}
-      />
+      <h1>📋 오늘의 할 일 앱</h1>
+      <Navigation />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <MainPage
+              todos={todos}
+              filter={filter}
+              setFilter={setFilter}
+              addTodo={addTodo}
+              toggleTodo={toggleTodo}
+              deleteTodo={deleteTodo}
+              editTodo={editTodo}
+              clearCompleted={clearCompleted}
+            />
+          }
+        />
+        <Route path="/stats" element={<StatsPage todos={todos} />} />
+      </Routes>
     </div>
   );
 }
