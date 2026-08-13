@@ -29,7 +29,10 @@ function Quote() {
     <div className="quote-container">
       <div className="quote-content">
         {loading ? (
-          <p className="quote-text loading">✨ 명언을 불러오는 중...</p>
+          <>
+            <p className="quote-text loading">✨ 명언을 불러오는 중...</p>
+            <p className="quote-author loading-author">&nbsp;</p>
+          </>
         ) : (
           <>
             <p className="quote-text" title={quote.text}>

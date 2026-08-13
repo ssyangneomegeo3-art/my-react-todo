@@ -133,7 +133,7 @@ body.dark .nav-link.active {
   width: 100%;
 }
 
-/* 💡 명언 레이아웃 덜컹거림(CLS) 방지 고정 규격 */
+/* 💡 명언 레이아웃 높이 고정 (72px 고정으로 로딩/완료 전환 시 덜컹거림 100% 제거) */
 .quote-container {
   background-color: #f1f5f9;
   padding: 10px 14px;
@@ -142,8 +142,9 @@ body.dark .nav-link.active {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  min-height: 68px; /* 68px 고정 최소 높이로 덜컹거림 완벽 차단 */
+  height: 72px; /* 절대 고정 높이 */
   box-sizing: border-box;
+  overflow: hidden;
   transition: background-color 0.3s ease;
 }
 
@@ -156,16 +157,17 @@ body.dark .quote-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-width: 0; /* Flexbox 내 말줄임(...) 작동을 위한 필수 속성 */
+  height: 100%;
+  min-width: 0; /* Flexbox 내 ellipsis 말줄임 작동 필수 속성 */
 }
 
 .quote-text {
-  font-size: 0.825rem;
-  line-height: 1.35;
+  font-size: 0.8rem;
+  line-height: 1.3;
   color: #334155;
   word-break: keep-all;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* 최대 2줄로 제한 */
+  -webkit-line-clamp: 2; /* 최대 2줄 제한 */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -182,6 +184,7 @@ body.dark .quote-text {
 
 .quote-author {
   font-size: 0.725rem;
+  line-height: 1.2;
   color: #64748b;
   margin-top: 3px;
   text-align: right;
@@ -193,6 +196,10 @@ body.dark .quote-text {
 
 body.dark .quote-author {
   color: #94a3b8;
+}
+
+.quote-author.loading-author {
+  visibility: hidden; /* 로딩 중에도 공간만 차지하게 유지 */
 }
 
 .quote-refresh-btn {
