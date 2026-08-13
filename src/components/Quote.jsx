@@ -1,43 +1,54 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
-export default function Quote() {
-  const [quote, setQuote] = useState({ text: '로딩 중...', author: '' });
-  const [loading, setLoading] = useState(false);
+function Quote() {
+  const [quote, setQuote] = useState({ text: '', author: '' });
+  const [loading, setLoading] = useState(true);
 
-  // 명언을 가져오는 독립 함수
-  const fetchQuote = () => {
+  const fetchQuote = async () => {
     setLoading(true);
-    fetch('https://dummyjson.com/quotes/random')
-      .then((res) => res.json())
-      .then((data) => {
-        setQuote({ text: data.quote, author: data.author });
-        setLoading(false);
-      })
-      .catch(() => {
-        setQuote({ text: '오늘의 명언을 불러오지 못했습니다.', author: '' });
-        setLoading(false);
+    try {
+      const response = await fetch('https://dummyjson.com/quotes/random');
+      if (!response.ok) throw new Error('명언을 불러오는데 실패했습니다.');
+      const data = await response.json();
+      setQuote({ text: data.quote, author: data.author });
+    } catch (error) {
+      setQuote({
+        text: '고통 없이는 얻는 것도 없다.',
+        author: '벤저민 프랭클린'
       });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // 최초 1회 실행
   useEffect(() => {
     fetchQuote();
   }, []);
 
   return (
-    <div className="quote-box">
-      <div className="quote-header">
-        <p className="quote-text">"{quote.text}"</p>
-        <button
-          className="quote-refresh-btn"
-          onClick={fetchQuote}
-          disabled={loading}
-          title="새 명언 불러오기"
-        >
-          🔄
-        </button>
+    <div className="quote-container">
+      <div className="quote-content">
+        {loading ? (
+          <p className="quote-text loading">✨ 명언을 불러오는 중...</p>
+        ) : (
+          <>
+            <p className="quote-text" title={quote.text}>
+              "{quote.text}"
+            </p>
+            <p className="quote-author">- {quote.author}</p>
+          </>
+        )}
       </div>
-      <small className="quote-author">- {quote.author || '익명'}</small>
+      <button
+        className="quote-refresh-btn"
+        onClick={fetchQuote}
+        title="새로운 명언 불러오기"
+        disabled={loading}
+      >
+        🔄
+      </button>
     </div>
   );
 }
+
+export default Quote;
