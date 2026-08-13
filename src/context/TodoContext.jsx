@@ -8,7 +8,6 @@ export const TodoProvider = ({ children }) => {
     if (!saved) return [];
     try {
       const parsed = JSON.parse(saved);
-      // 기존 데이터 하위 호환성 보장 (category가 없는 경우 '기타' 부여)
       return parsed.map((todo) => ({
         ...todo,
         category: todo.category || '기타',
@@ -19,13 +18,35 @@ export const TodoProvider = ({ children }) => {
     }
   });
 
-  const [filter, setFilter] = useState('all'); // all, active, completed
-  const [selectedCategory, setSelectedCategory] = useState('전체'); // 전체, 공부, 업무, 개인, 기타
+  const [filter, setFilter] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('전체');
   const [searchQuery, setSearchQuery] = useState('');
   const [toastMessage, setToastMessage] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem('theme') === 'dark';
   });
+
+  // 오프라인/온라인 네트워크 상태 관리
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true);
+      setToastMessage('🌐 인터넷 연결이 복구되었습니다.');
+    };
+    const handleOffline = () => {
+      setIsOnline(false);
+      setToastMessage('📡 오프라인 상태입니다. (저장 기능은 오프라인에서도 작동합니다)');
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   // 다크 모드 적용
   useEffect(() => {
@@ -43,7 +64,6 @@ export const TodoProvider = ({ children }) => {
     localStorage.setItem('todos', JSON.stringify(todos));
   }, [todos]);
 
-  // 토스트 메시지
   const showToast = useCallback((msg) => {
     setToastMessage(msg);
   }, []);
@@ -52,7 +72,6 @@ export const TodoProvider = ({ children }) => {
     setToastMessage('');
   }, []);
 
-  // 다크모드 토글
   const toggleDarkMode = useCallback(() => {
     setIsDarkMode((prev) => {
       const next = !prev;
@@ -61,7 +80,6 @@ export const TodoProvider = ({ children }) => {
     });
   }, [showToast]);
 
-  // Todo 추가
   const addTodo = useCallback((text, category = '개인') => {
     if (!text.trim()) return;
     const newTodo = {
@@ -81,7 +99,6 @@ export const TodoProvider = ({ children }) => {
     showToast('✨ 새로운 할 일이 추가되었습니다!');
   }, [showToast]);
 
-  // Todo 토글
   const toggleTodo = useCallback((id) => {
     setTodos((prev) =>
       prev.map((todo) => {
@@ -95,13 +112,11 @@ export const TodoProvider = ({ children }) => {
     );
   }, [showToast]);
 
-  // Todo 삭제
   const deleteTodo = useCallback((id) => {
     setTodos((prev) => prev.filter((todo) => todo.id !== id));
     showToast('🗑️ 항목이 삭제되었습니다.');
   }, [showToast]);
 
-  // Todo 수정
   const editTodo = useCallback((id, newText, newCategory) => {
     if (!newText.trim()) return;
     setTodos((prev) =>
@@ -112,7 +127,6 @@ export const TodoProvider = ({ children }) => {
     showToast('✏️ 할 일이 수정되었습니다.');
   }, [showToast]);
 
-  // 완료 항목 전체 삭제
   const clearCompleted = useCallback(() => {
     setTodos((prev) => {
       const activeCount = prev.filter((todo) => !todo.completed).length;
@@ -124,7 +138,6 @@ export const TodoProvider = ({ children }) => {
     });
   }, [showToast]);
 
-  // JSON 백업 (Export)
   const exportData = useCallback(() => {
     if (todos.length === 0) {
       showToast('⚠️ 백업할 할 일 데이터가 없습니다.');
@@ -144,7 +157,6 @@ export const TodoProvider = ({ children }) => {
     showToast('📥 JSON 백업 파일이 다운로드되었습니다.');
   }, [todos, showToast]);
 
-  // JSON 복원 (Import)
   const importData = useCallback((importedTodos) => {
     if (!Array.isArray(importedTodos)) {
       showToast('❌ 올바르지 않은 데이터 형식입니다.');
@@ -161,7 +173,6 @@ export const TodoProvider = ({ children }) => {
     showToast(`📤 ${validated.length}개의 할 일을 성공적으로 복원했습니다!`);
   }, [showToast]);
 
-  // 상태 + 카테고리 + 검색어 실시간 중첩 필터링
   const filteredTodos = useMemo(() => {
     return todos.filter((todo) => {
       const matchesStatus =
@@ -197,6 +208,7 @@ export const TodoProvider = ({ children }) => {
       clearToast,
       isDarkMode,
       toggleDarkMode,
+      isOnline,
       addTodo,
       toggleTodo,
       deleteTodo,
@@ -216,6 +228,7 @@ export const TodoProvider = ({ children }) => {
       clearToast,
       isDarkMode,
       toggleDarkMode,
+      isOnline,
       addTodo,
       toggleTodo,
       deleteTodo,

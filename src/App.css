@@ -516,3 +516,257 @@ body.dark .stat-card .value.rate { color: #c084fc; }
     transform: translate(-50%, 15px) scale(0.95);
   }
 }
+/* ==========================================================================
+   13일 차 신규 스타일: 카테고리, 데이터 백업 UI 규격
+   ========================================================================== */
+
+/* TodoInput 드롭다운 */
+.todo-input-form {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.category-select {
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background-color: #f8fafc;
+  font-size: 0.85rem;
+  color: #334155;
+  outline: none;
+  cursor: pointer;
+}
+
+.dark .category-select {
+  background-color: #334155;
+  border-color: #475569;
+  color: #f1f5f9;
+}
+
+/* 카테고리 태그 버튼 (Filter) */
+.category-filter-container {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.category-badge-btn {
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  background-color: #f1f5f9;
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.category-badge-btn.active {
+  background-color: #3b82f6;
+  color: #ffffff;
+  border-color: #3b82f6;
+}
+
+.dark .category-badge-btn {
+  background-color: #334155;
+  border-color: #475569;
+  color: #94a3b8;
+}
+
+.dark .category-badge-btn.active {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+/* Todo 항목 내 카테고리 태그 색상 규격 */
+.category-tag {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.category-공부 { background-color: #e0f2fe; color: #0284c7; }
+.category-업무 { background-color: #fef3c7; color: #d97706; }
+.category-개인 { background-color: #dcfce7; color: #15803d; }
+.category-기타 { background-color: #f3e8ff; color: #7e22ce; }
+
+.dark .category-공부 { background-color: #0369a1; color: #e0f2fe; }
+.dark .category-업무 { background-color: #b45309; color: #fef3c7; }
+.dark .category-개인 { background-color: #15803d; color: #dcfce7; }
+.dark .category-기타 { background-color: #6b21a8; color: #f3e8ff; }
+
+/* 데이터 백업 / 복원 스타일 */
+.backup-section {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.dark .backup-section {
+  border-top-color: #334155;
+}
+
+.backup-section h3 {
+  font-size: 0.95rem;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.dark .backup-section h3 {
+  color: #f1f5f9;
+}
+
+.backup-desc {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-bottom: 12px;
+}
+
+.data-backup-container {
+  display: flex;
+  gap: 8px;
+}
+
+.backup-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.export-btn {
+  background-color: #0284c7;
+  color: #ffffff;
+}
+
+.import-btn {
+  background-color: #0d9488;
+  color: #ffffff;
+}
+
+.backup-btn:hover {
+  opacity: 0.9;
+}
+
+/* 카테고리 통계 카드 */
+.category-stats-card {
+  margin-top: 20px;
+  padding: 14px;
+  background-color: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.dark .category-stats-card {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+.category-stats-card h3 {
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.category-stats-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.category-stat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: #ffffff;
+  border-radius: 6px;
+
+}
+
+.dark .category-stat-item {
+  background: #0f172a;
+}
+
+.category-count {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+/* ==========================================================================
+   14일 차 신규 스타일: PWA 설치 바 및 오프라인 상태 표시줄
+   ========================================================================== */
+
+.pwa-status-wrapper {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 오프라인 안내 바 */
+.offline-banner {
+  background-color: #f59e0b;
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* PWA 설치 권유 배너 */
+.pwa-install-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+}
+
+.pwa-install-btn {
+  background-color: #ffffff;
+  color: #1d4ed8;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.pwa-install-btn:hover {
+  background-color: #f1f5f9;
+  transform: scale(1.03);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
